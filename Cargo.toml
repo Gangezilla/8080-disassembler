@@ -1,0 +1,8 @@
+[package]
+name = "eightyeighty-disassembler"
+version = "0.1.0"
+authors = ["Scott <scottgangemi@gmail.com>"]
+
+[dependencies]
+hex = "0.3.2"
+serde = "1.0.91"
