@@ -166,6 +166,11 @@ fn main() {
                 println!("46: MOV B,M");
                 position += 1;
             }
+            "47" => {
+                // Move contents of A to B.
+                println!("47: MOV B,A");
+                position += 1
+            }
             "5f" => {
                 // Move contents of A to E.
                 println!("5f: MOV E,A");
@@ -203,6 +208,11 @@ fn main() {
                 println!("7a: MOV A,D");
                 position += 1;
             }
+            "7b" => {
+                // Move contents of E to A
+                println!("7b: MOV A,E");
+                position += 1;
+            }
             "7d" => {
                 // Move contents of L to A
                 println!("7d: MOV A,L");
@@ -224,6 +234,11 @@ fn main() {
                 // Exclusive OR Register
                 // The content of register r is exclusive-or'd with the content of the accumulator. The result is placed in the accumulator. The CY and AC flags are cleared.
                 println!("af: XRA A");
+                position += 1;
+            }
+            "b" => {
+                // Decrement Register BC
+                println!("0b: DCX B");
                 position += 1;
             }
             "c0" => {
@@ -357,6 +372,13 @@ fn main() {
                 // The data placed on the eight bit bi-directional data bus by the specified port is moved to register A.
                 println!("db: IN d8. {:x}", buffer[position + 1]);
                 position += 2;
+            }
+            "de" => {
+                // Subtract immediate from A with borrow
+                // The contents of the second byte of the instruction and the contents of the CY flag are both subtracted from the accumulator.
+                // The result is placed in the accumulator.
+                println!("de: SPI d8. {:x}", buffer[position + 1]);
+                position += 1;
             }
             "e1" => {
                 // Pop register pair H & L off stack
