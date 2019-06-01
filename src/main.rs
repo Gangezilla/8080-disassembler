@@ -21,6 +21,8 @@ fn main() {
     let end_position = buffer.len();
     while position < end_position {
         let hex = &format!("{:x}", buffer[position]);
+        let hex_position = &format!("{:x}", position);
+        print!("0{}     ", hex_position);
         match &hex as &str {
             "0" => {
                 println!("00: NOP");
@@ -29,9 +31,9 @@ fn main() {
             "1" => {
                 // Load byte 3 into register B. Load byte 2 into register C.
                 println!(
-                    "01: LXI B,D16. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "01: LXI B,{:x}{:x}.",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -47,7 +49,7 @@ fn main() {
             }
             "6" => {
                 // Move immediate second byte to register B
-                println!("06: MVI B, D8. {:x}", buffer[position + 1]);
+                println!("06: MVI B, {:x}.", buffer[position + 1]);
                 position += 2;
             }
             "7" => {
@@ -71,7 +73,7 @@ fn main() {
             "e" => {
                 // Move byte 2 into register C.
                 // MVI stands for Move Immediate.
-                println!("0e: MVI C,D8. {:x}", buffer[position + 1]);
+                println!("0e: MVI C,{:x}.", buffer[position + 1]);
                 position += 2;
             }
             "f" => {
@@ -84,9 +86,9 @@ fn main() {
                 // Move byte 3 into register D. Move byte 2 into register E.
                 // LXI stands for Load Immediate Register
                 println!(
-                    "11: LXI D,D16. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "11: LXI {:x}{:x}.",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -107,7 +109,7 @@ fn main() {
             }
             "16" => {
                 // Move byte 2 into D
-                println!("16: MVI D, D8. {:x}", buffer[position + 1]);
+                println!("16: MVI D,{:x}.", buffer[position + 1]);
                 position += 2;
             }
             "19" => {
@@ -132,9 +134,9 @@ fn main() {
                 // Byte 3 of the instruction is moved into the high order register of the register pair rp.
                 // byte 2 of the instruction is moved into the low order register (rl) of the restier pair rp.
                 println!(
-                    "21: LXI H,D16. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "21: LXI H,{:x}{:x}.",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -145,9 +147,9 @@ fn main() {
                 // ((byte 3) (byte 2)) <- (L)
                 // ((byte 3)(byte 2) + 1) <- (H)
                 println!(
-                    "22: SHLD adr. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "22: SHLD adr. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -158,7 +160,7 @@ fn main() {
             }
             "26" => {
                 // Move byte into register H.
-                println!("26: MVI H,D8. {:x}", buffer[position + 1]);
+                println!("26: MVI H,{:x}.", buffer[position + 1]);
                 position += 2;
             }
             "27" => {
@@ -179,9 +181,9 @@ fn main() {
                 // The content of the memory location, whose address is specified in byte 2 and byte 3 of the instruction, is moved to register L.
                 //  The content of the memory location at the succeeding address is moved to register H.
                 println!(
-                    "2a: LHLD addr. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "2a: LHLD addr. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -197,15 +199,15 @@ fn main() {
             }
             "2e" => {
                 // Move byte 2 into register L
-                println!("2e: MVI L,D8. {:x}", buffer[position + 1]);
+                println!("2e: MVI L,{:x}.", buffer[position + 1]);
                 position += 2;
             }
             "31" => {
                 // move byte 3 into high order location of register SP. move byte 2 into low order location of register SP.
                 println!(
-                    "31: LXI SP,D16. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "31: LXI SP,D16. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -213,9 +215,9 @@ fn main() {
                 // Store A direct.
                 // The content of the accumulator is moved to the next two bytes.
                 println!(
-                    "32: STA {:x}, {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "32: STA {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -233,7 +235,7 @@ fn main() {
             }
             "36" => {
                 // Move second byte, into register HL.
-                println!("36: MVI M,D8. {:x}", buffer[position + 1]);
+                println!("36: MVI M,{:x}.", buffer[position + 1]);
                 position += 2;
             }
             "37" => {
@@ -246,9 +248,9 @@ fn main() {
                 // Load Accumulator Direct
                 // The content of the memory location, whose address is specified in byte 2 and byte 3 of the instruction, is moved to register A.
                 println!(
-                    "3a: LDA adr. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "3a: LDA adr. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3
             }
@@ -264,7 +266,7 @@ fn main() {
             }
             "3e" => {
                 // Move immediate register
-                println!("3e: MVI A,D8 {:x}", buffer[position + 1]);
+                println!("3e: MVI A,{:x}.", buffer[position + 1]);
                 position += 2;
             }
             "46" => {
@@ -477,18 +479,18 @@ fn main() {
                 // Jump on no zero.
                 // not sure, but i think its jump if a check is non zero.
                 println!(
-                    "c2: JNZ adr. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "c2: JNZ adr. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
             "c3" => {
                 // JMP, uses next two bytes to determine where to jump to.
                 println!(
-                    "c3: JMP: {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "c3: JMP: {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -496,9 +498,9 @@ fn main() {
                 // Call address if non zero
                 // Not sure what it checks? whats non zero
                 println!(
-                    "c4: CNZ adr. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "c4: CNZ adr. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -511,7 +513,7 @@ fn main() {
                 // Add immediate to A.
                 // The content of the second byte of the instruction is added to the content of the accumulator.
                 // The result is placed in the accumulator.
-                println!("c6: ADI D8. {:x}", buffer[position + 1]);
+                println!("c6: ADI {:x}.", buffer[position + 1]);
                 position += 2;
             }
             "c8" => {
@@ -531,9 +533,9 @@ fn main() {
                 // Jump on zero
                 // not sure. i imagine it checks to see if something is 0, then jumps...
                 println!(
-                    "ca: JZ adr. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "ca: JZ adr. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -541,9 +543,9 @@ fn main() {
                 // If Z, call adr
                 // Z is one of the flags. Must check if that flag is set then calls.
                 println!(
-                    "cc: CZ adr. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "cc: CZ adr. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -552,9 +554,9 @@ fn main() {
                 // The low-order eight bits of the next instruction address are moved to the memory location whose address is two less than the content of register SP.
                 // The content of register SP is decremented by 2. Control is transferred to the instruction whose address is specified in byte 3 and byte 2 of the current instruction.
                 println!(
-                    "cd: CALL adr. {:x}, {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "cd: CALL adr. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -573,16 +575,16 @@ fn main() {
                 // Jump if no carry
                 // not sure, but i imagine it's jump if the no carry flag hasn't been set.
                 println!(
-                    "d2: JNC. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "d2: JNC. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3
             }
             "d3" => {
                 // Output
                 // The content of register A is placed on the eight bit bi-directional data bus for transmission to the specified port.
-                println!("d3: OUT D8. {:x}", buffer[position + 1]);
+                println!("d3: OUT {:x}.", buffer[position + 1]);
                 position += 2;
             }
             "d5" => {
@@ -593,7 +595,7 @@ fn main() {
             "d6" => {
                 // Subtract immediate from A
                 // Subtracts the byte value from A.
-                println!("d6: SUI D8. {:x}", buffer[position + 1]);
+                println!("d6: SUI {:x}.", buffer[position + 1]);
                 position += 2;
             }
             "d8" => {
@@ -605,23 +607,23 @@ fn main() {
                 // Conditional Jump
                 // If the specified condition is true, control is transferred to the instruction whose address is specified in byte 3 and byte 2 of the current instruction; other- wise, control continues sequentially.
                 println!(
-                    "da: JC adr. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "da: JC adr. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
             "db" => {
                 // IN port
                 // The data placed on the eight bit bi-directional data bus by the specified port is moved to register A.
-                println!("db: IN d8. {:x}", buffer[position + 1]);
+                println!("db: IN,{:x}.", buffer[position + 1]);
                 position += 2;
             }
             "de" => {
                 // Subtract immediate from A with borrow
                 // The contents of the second byte of the instruction and the contents of the CY flag are both subtracted from the accumulator.
                 // The result is placed in the accumulator.
-                println!("de: SPI d8. {:x}", buffer[position + 1]);
+                println!("de: SPI {:x}.", buffer[position + 1]);
                 position += 1;
             }
             "e1" => {
@@ -645,7 +647,7 @@ fn main() {
                 // And immediate with A.
                 // The content of the second byte of the instruction is logically anded with the contents of the accumulator.
                 // The result is placed in the accumulator. The CY and AC flags are cleared.
-                println!("e6: ANI D8. {:x}", buffer[position + 1]);
+                println!("e6: ANI {:x}.", buffer[position + 1]);
                 position += 2;
             }
             "e9" => {
@@ -673,7 +675,7 @@ fn main() {
             }
             "f6" => {
                 // does an or of A and the byte data, loads that into the accumulator.
-                println!("f6: ORI D8. {:x}", buffer[position + 1]);
+                println!("f6: ORI {:x}.", buffer[position + 1]);
                 position += 2;
             }
             "fa" => {
@@ -683,9 +685,9 @@ fn main() {
                 // minus is if S = 1
                 // S is a flag that stands for Sign
                 println!(
-                    "fa: JM adr. {:x} {:x}",
-                    buffer[position + 1],
-                    buffer[position + 2]
+                    "fa: JM adr. {:x}{:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
                 );
                 position += 3;
             }
@@ -700,7 +702,7 @@ fn main() {
                 // The content of the second byte of the instruction is subtracted from the accumulator.
                 // The condition flags are set by the result of the subtraction.
                 // The Z flag is set to 1 if (A) = (byte 2). The CY flag is set to 1 if (A) <(byte 2).
-                println!("fe: CPI D8. {:x}", buffer[position + 1],);
+                println!("fe: CPI {:x}.", buffer[position + 1],);
                 position += 2;
             }
             _ => {
