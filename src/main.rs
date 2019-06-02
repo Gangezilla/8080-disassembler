@@ -22,7 +22,7 @@ fn main() {
     while position < end_position {
         let hex = &format!("{:x}", buffer[position]);
         let hex_position = &format!("{:x}", position);
-        print!("0{}     ", hex_position);
+        print!("{}     ", hex_position);
         match &hex as &str {
             "0" => {
                 println!("00: NOP");
@@ -36,6 +36,18 @@ fn main() {
                     buffer[position + 1]
                 );
                 position += 3;
+            }
+            "2" => {
+                // Store A indirect
+                // The content of register A is moved to the memory location whose address is in the register pair rp.
+                // Note: only register pairs rp=B (registers B and C) or rp=D (registers D and E) may be specified.
+                println!("02: STAX B");
+                position += 1;
+            }
+            "3" => {
+                // BC <- BC + 1
+                println!("03: INX B");
+                position += 1;
             }
             "4" => {
                 // Increment B
@@ -60,9 +72,23 @@ fn main() {
                 println!("07: RLC");
                 position += 1;
             }
+            "8" => {
+                println!("08: -");
+                position += 1;
+            }
+            "9" => {
+                // HL = HL + BC
+                println!("09: DAD B");
+                position += 1;
+            }
             "a" => {
                 // Load B indirect
                 println!("0a: LDAX B");
+                position += 1;
+            }
+            "c" => {
+                // C <- C + 1;
+                println!("0c: INR C");
                 position += 1;
             }
             "d" => {
@@ -82,6 +108,10 @@ fn main() {
                 println!("0f: RRC");
                 position += 1;
             }
+            "10" => {
+                println!("10: -");
+                position += 1;
+            }
             "11" => {
                 // Move byte 3 into register D. Move byte 2 into register E.
                 // LXI stands for Load Immediate Register
@@ -91,6 +121,11 @@ fn main() {
                     buffer[position + 1]
                 );
                 position += 3;
+            }
+            "12" => {
+                // A <- (DE)
+                println!("12: STAX D");
+                position += 1;
             }
             "13" => {
                 // Increment register DE
@@ -112,6 +147,10 @@ fn main() {
                 println!("16: MVI D #{:x}.", buffer[position + 1]);
                 position += 2;
             }
+            "18" => {
+                println!("18: -");
+                position += 1;
+            }
             "19" => {
                 // Add D & E to H & L
                 println!("19: DAD D");
@@ -122,6 +161,32 @@ fn main() {
                 // The content of the memory location, whose address is in the register pair rp, is moved to register A.
                 // Note: only register pairs rp=B (registers B and C·) or rp=D (registers D and E) may be specified.
                 println!("1a: LDAX D");
+                position += 1;
+            }
+            "1b" => {
+                // DE = DE - 1
+                println!("1b: DCX D");
+                position += 1;
+            }
+            "1c" => {
+                // E <- E + 1
+                println!("1c: INR E");
+                position += 1;
+            }
+            "1d" => {
+                // E <- E - 1
+                println!("1d: DCR E");
+                position += 1;
+            }
+            "1e" => {
+                // move byte 2 into E
+                println!("1e: MVI E, {:x}", buffer[position + 1]);
+                position += 2;
+            }
+            "1f" => {
+                // 	A = A >> 1; bit 7 = prev bit 7; CY = prev bit 0
+                // Rotate A right thru carry
+                println!("1f: RAR");
                 position += 1;
             }
             "20" => {
@@ -158,6 +223,16 @@ fn main() {
                 println!("23: INX H");
                 position += 1;
             }
+            "24" => {
+                // Increment H register.
+                println!("24: INR H");
+                position += 1;
+            }
+            "25" => {
+                // H <- H - 1
+                println!("25: DCR H");
+                position += 1;
+            }
             "26" => {
                 // Move byte into register H.
                 println!("26: MVI H #{:x}", buffer[position + 1]);
@@ -169,6 +244,10 @@ fn main() {
                 // If the value of the least significant 4 bits of the accumulator is greater than 9 or if the AC flag is set, 6 is added to the accumulator.
                 // If the value of the most significant 4 bits of the accumulator is now greater than 9, or if the CY flag is set, 6 is added to the most significant 4 bits of the accumulator.
                 println!("27: DAA");
+                position += 1;
+            }
+            "28" => {
+                println!("28: -");
                 position += 1;
             }
             "29" => {
@@ -201,6 +280,17 @@ fn main() {
                 // Move byte 2 into register L
                 println!("2e: MVI L #{:x}", buffer[position + 1]);
                 position += 2;
+            }
+            "2f" => {
+                // Compliment A
+                // The contents of the accumulator are complemented- (zero bits become 1, one bits become 0).
+                // A <- !A
+                println!("2f: CMA");
+                position += 1;
+            }
+            "30" => {
+                println!("30: -");
+                position += 1;
             }
             "31" => {
                 // move byte 3 into high order location of register SP. move byte 2 into low order location of register SP.
@@ -244,6 +334,15 @@ fn main() {
                 println!("37: STC");
                 position += 1;
             }
+            "38" => {
+                println!("38: -");
+                position += 1;
+            }
+            "39" => {
+                // 	HL = HL + SP
+                println!("39: DAD SP");
+                position += 1;
+            }
             "3a" => {
                 // Load Accumulator Direct
                 // The content of the memory location, whose address is specified in byte 2 and byte 3 of the instruction, is moved to register A.
@@ -269,6 +368,37 @@ fn main() {
                 println!("3e: MVI A #{:x}.", buffer[position + 1]);
                 position += 2;
             }
+            "3f" => {
+                // CY=!CY
+                println!("3f: CMC");
+                position += 1;
+            }
+            "40" => {
+                println!("40: MOV B,B");
+                position += 1;
+            }
+            "41" => {
+                // Move C into B.
+                println!("41: MOV B,C");
+                position += 1;
+            }
+            "42" => {
+                // B <- D
+                println!("42: MOV B,D");
+                position += 1;
+            }
+            "43" => {
+                println!("43: MOV B,E");
+                position += 1;
+            }
+            "44" => {
+                println!("44: MOV B,H");
+                position += 1;
+            }
+            "45" => {
+                println!("45: MOV B,L");
+                position += 1;
+            }
             "46" => {
                 // Move the contents of HL to B
                 println!("46: MOV B,M");
@@ -278,6 +408,33 @@ fn main() {
                 // Move contents of A to B.
                 println!("47: MOV B,A");
                 position += 1
+            }
+            "48" => {
+                // Move B into C.
+                println!("48: MOV C,B");
+                position += 1;
+            }
+            "49" => {
+                // C <- C
+                println!("49: MOV C,C");
+                position += 1;
+            }
+            "4a" => {
+                // C <- D
+                println!("4a: MOV C,D");
+                position += 1;
+            }
+            "4b" => {
+                println!("4b: MOV C,E");
+                position += 1;
+            }
+            "4c" => {
+                println!("4c: MOV C,H");
+                position += 1;
+            }
+            "4d" => {
+                println!("4d: MOV C,L");
+                position += 1;
             }
             "4e" => {
                 // Move HL to C
@@ -289,9 +446,35 @@ fn main() {
                 println!("4f: MOV C,A");
                 position += 1;
             }
+            "50" => {
+                println!("MOV D,B");
+                position += 1;
+            }
+            "51" => {
+                println!("51: MOV D,C");
+                position += 1;
+            }
+            "54" => {
+                // Move H into D
+                println!("54: MOV D,H");
+                position += 1;
+            }
             "56" => {
                 // Move register HL into register D.
                 println!("56: MOV D,M");
+                position += 1;
+            }
+            "57" => {
+                // Move D into A.
+                println!("57: MOV D,A");
+                position += 1;
+            }
+            "59" => {
+                println!("59: MOV E,C");
+                position += 1;
+            }
+            "5b" => {
+                println!("5b: MOV E,E");
                 position += 1;
             }
             "5e" => {
@@ -304,9 +487,32 @@ fn main() {
                 println!("5f: MOV E,A");
                 position += 1;
             }
+            "60" => {
+                // Move B to H
+                println!("60: MOV H,B");
+                position += 1;
+            }
             "61" => {
                 // Move contents of register C to register H
                 println!("61: MOV H,C");
+                position += 1;
+            }
+            "62" => {
+                println!("62: MOV H,D");
+                position += 1;
+            }
+            "63" => {
+                println!("63: MOV H,E");
+                position += 1;
+            }
+            "64" => {
+                // Move H to H (??)
+                println!("64: MOV H,H");
+                position += 1;
+            }
+            "65" => {
+                // H <- L
+                println!("65: MOV H,L");
                 position += 1;
             }
             "66" => {
@@ -328,6 +534,19 @@ fn main() {
             "69" => {
                 // Move value of C into register L.
                 println!("69: MOV L,C");
+                position += 1;
+            }
+            "6c" => {
+                // L <- H
+                println!("6c: MOV L,H");
+                position += 1;
+            }
+            "6d" => {
+                println!("6d: MOV L,L");
+                position += 1;
+            }
+            "6e" => {
+                println!("6e: MOV L,M");
                 position += 1;
             }
             "6f" => {
@@ -354,6 +573,17 @@ fn main() {
             "73" => {
                 // Move register E to register M (HL)
                 println!("73: MOV M,E");
+                position += 1;
+            }
+            "74" => {
+                // (HL) <- H
+                println!("74: MOV M,H");
+                position += 1;
+            }
+            "76" => {
+                // HALT (??)
+                // The processor is stopped.
+                println!("76: HLT");
                 position += 1;
             }
             "77" => {
@@ -396,9 +626,34 @@ fn main() {
                 println!("7e: MOV A,M");
                 position += 1;
             }
+            "7f" => {
+                // A <- A
+                println!("7f: MOV A,A");
+                position += 1;
+            }
             "80" => {
                 // Add value of B to the accumulator to A
                 println!("80: ADD B");
+                position += 1;
+            }
+            "81" => {
+                // A <- A + C
+                println!("81: ADD C");
+                position += 1;
+            }
+            "82" => {
+                // A <- A + D
+                println!("82: ADD D");
+                position += 1;
+            }
+            "83" => {
+                // Add E to A.
+                println!("83: ADD E");
+                position += 1;
+            }
+            "84" => {
+                // A <- A + H;
+                println!("84: ADD H");
                 position += 1;
             }
             "85" => {
@@ -411,9 +666,69 @@ fn main() {
                 println!("86: ADD M");
                 position += 1;
             }
+            "88" => {
+                // A <- A + B + CY
+                println!("88: ADC B");
+                position += 1;
+            }
+            "8a" => {
+                // Add D, and CY to A.
+                println!("8a: ADC D");
+                position += 1;
+            }
+            "8b" => {
+                // A <- A + E + CY
+                println!("8b: ADC E");
+                position += 1;
+            }
+            "8e" => {
+                // 	A <- A + (HL) + CY
+                println!("8e: ADC M");
+                position += 1;
+            }
+            "90" => {
+                // A <- A + B
+                println!("90: SUB B");
+                position += 1;
+            }
+            "94" => {
+                // A <- A + H
+                println!("94: SUB H");
+                position += 1;
+            }
             "97" => {
                 // Subtract value of A from A (i guess sets A to 0)
                 println!("97: SUB A");
+                position += 1;
+            }
+            "98" => {
+                // 	A <- A - B - CY
+                println!("98: SBB B");
+                position += 1;
+            }
+            "99" => {
+                // A <- A - C - CY
+                println!("99: SBB C");
+                position += 1;
+            }
+            "9a" => {
+                // A <- A - D - CY
+                println!("9a: SBB D");
+                position += 1;
+            }
+            "9b" => {
+                // 	A <- A - E - CY
+                println!("9b: SBB E");
+                position += 1;
+            }
+            "9d" => {
+                // A <- A - L - CY
+                println!("9d: SBB L");
+                position += 1;
+            }
+            "9e" => {
+                // 	A <- A - (HL) - CY
+                println!("9e: SBB M");
                 position += 1;
             }
             "a0" => {
@@ -421,11 +736,32 @@ fn main() {
                 println!("a0: ANA B");
                 position += 1;
             }
+            "a3" => {
+                // A <- A * E
+                println!("a3: ANA E");
+                position += 1;
+            }
+            "a6" => {
+                // 	A <- A & (HL)
+                println!("a6: ANA M");
+                position += 1;
+            }
             "a7" => {
                 // AND register
                 // The content of register r is logically anded with the content of the accumulator.
                 // The result is placed in the accumulator. The CY flag is cleared.
                 println!("a7: ANA A");
+                position += 1;
+            }
+            "a8" => {
+                // 	A <- A ^ B
+                // Exclusive OR
+                println!("a8: XRA B");
+                position += 1;
+            }
+            "aa" => {
+                // A <- A ^ D
+                println!("aa: XRA D");
                 position += 1;
             }
             "af" => {
@@ -446,10 +782,20 @@ fn main() {
                 println!("b0: ORA B");
                 position += 1;
             }
+            "b3" => {
+                // A <- A | E
+                println!("b3: ORA E");
+                position += 1;
+            }
             "b4" => {
                 // A <- A | H
                 // Or register H with register A.
                 println!("b4: ORA H");
+                position += 1;
+            }
+            "b6" => {
+                // Does an or with whats in register M (HL) versus accumulator
+                println!("b6: ORA M");
                 position += 1;
             }
             "b8" => {
@@ -457,6 +803,16 @@ fn main() {
                 // Contents of register B are substracted from A.
                 // couldnt tell you why its called compare
                 println!("b8: CMP B");
+                position += 1;
+            }
+            "bb" => {
+                // A - E
+                println!("bb: CMP E");
+                position += 1;
+            }
+            "bc" => {
+                // A - H
+                println!("bc: CMP H");
                 position += 1;
             }
             "be" => {
@@ -587,6 +943,15 @@ fn main() {
                 println!("d3: OUT #{:x}.", buffer[position + 1]);
                 position += 2;
             }
+            "d4" => {
+                // If NCY (no carry) call address.
+                println!(
+                    "d4: CNC adr #{:x} {:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
+                );
+                position += 3;
+            }
             "d5" => {
                 // Push register Pair D & E on stack
                 println!("d5: PUSH D");
@@ -626,10 +991,24 @@ fn main() {
                 println!("de: SPI #{:x}.", buffer[position + 1]);
                 position += 1;
             }
+            "e0" => {
+                // 	if PO, RET
+                println!("eo: RPO");
+                position += 1;
+            }
             "e1" => {
                 // Pop register pair H & L off stack
                 println!("e1: POP H");
                 position += 1;
+            }
+            "e2" => {
+                // Jump on parity odd
+                println!(
+                    "e2: JPO adr #{:x} {:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
+                );
+                position += 3;
             }
             "e3" => {
                 // Exchange top of stack, H & L.
@@ -662,6 +1041,24 @@ fn main() {
                 println!("eb: XCHG");
                 position += 1;
             }
+            "ec" => {
+                println!(
+                    "ec: CPE adr #{:x} {:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
+                );
+                position += 3;
+            }
+            "ee" => {
+                // Exclusive Or immediate with A
+                println!("ee: XRI #{:x}", buffer[position + 1]);
+                position += 2;
+            }
+            "f0" => {
+                // if P, RET
+                println!("f0: RP");
+                position += 1;
+            }
             "f1" => {
                 // Pop A and Flags off stack
                 println!("f1: POP PSW");
@@ -677,6 +1074,11 @@ fn main() {
                 // does an or of A and the byte data, loads that into the accumulator.
                 println!("f6: ORI #{:x}.", buffer[position + 1]);
                 position += 2;
+            }
+            "f8" => {
+                // if M, return
+                println!("f8: RM");
+                position += 1;
             }
             "fa" => {
                 //	if M, PC <- adr
@@ -697,6 +1099,15 @@ fn main() {
                 println!("fb: EI");
                 position += 1;
             }
+            "fc" => {
+                // if M, CALL adr
+                println!(
+                    "fc: CM adr #{:x} {:x}",
+                    buffer[position + 2],
+                    buffer[position + 1]
+                );
+                position += 1;
+            }
             "fe" => {
                 // Compare immediate
                 // The content of the second byte of the instruction is subtracted from the accumulator.
@@ -704,6 +1115,11 @@ fn main() {
                 // The Z flag is set to 1 if (A) = (byte 2). The CY flag is set to 1 if (A) <(byte 2).
                 println!("fe: CPI #{:x}.", buffer[position + 1],);
                 position += 2;
+            }
+            "ff" => {
+                // CALL $38
+                println!("ff: RST 7");
+                position += 1;
             }
             _ => {
                 println!("Unimplemented instruction: {}", hex);
